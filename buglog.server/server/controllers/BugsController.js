@@ -1,19 +1,44 @@
 import BaseController from '../utils/BaseController'
 import { Auth0Provider } from '@bcwdev/auth0provider'
+import { bugsService } from '../services/BugsService'
+import { notesService } from '../services/NotesService'
 
 export class BugsController extends BaseController {
   constructor() {
     super('api/bugs')
     this.router
       .get('', this.getAll)
+      .get('/:id', this.findById)
+      .get('/:id/notes', this.getAllNotesByBugId)
       // NOTE: Beyond this point all routes require Authorization tokens (the user must be logged in)
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post('', this.createBug)
+      .put('/:id', this.editBug)
+      .delete('/:id', this.deleteBug)
   }
 
   async getAll(req, res, next) {
     try {
-      return res.send(req.query)
+      const data = await bugsService.getAll(req.query)
+      res.send(data)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getAllNotesByBugId(req, res, next) {
+    try {
+      const data = await notesService.getAllNotesByBugId(req.params.id)
+      res.send(data)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async findById(req, res, next) {
+    try {
+      const data = await bugsService.findById({ _id: req.params.id })
+      res.send(data)
     } catch (error) {
       next(error)
     }
@@ -23,7 +48,30 @@ export class BugsController extends BaseController {
     try {
       // NOTE NEVER TRUST THE CLIENT TO ADD THE CREATOR ID
       req.body.creatorId = req.userInfo.id
-      res.send(req.body)
+      const data = await bugsService.createBug(req.body)
+      // AppState.Boards.push(res.data)
+      res.send(data)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async editBug(req, res, next) {
+    try {
+      req.body.creatorId = req.userInfo.id
+      req.body.id = req.params.id
+      const data = await bugsService.editBug(req.body)
+      return res.send(data)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async deleteBug(req, res, next) {
+    try {
+      req.body.creatorId = req.userInfo.id
+      const data = await bugsService.deleteBug({ _id: req.params.id })
+      return res.send(data)
     } catch (error) {
       next(error)
     }

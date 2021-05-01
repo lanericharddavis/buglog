@@ -1,22 +1,39 @@
 import { dbContext } from '../db/DbContext'
-import { BadRequest } from '../utils/Errors'
+import { BadRequest, Forbidden } from '../utils/Errors'
 
 class BugsService {
-  async find(query = {}) {
-    const bugs = await dbContext.Bug.find(query)
+  async getAll(query = {}) {
+    const bugs = await dbContext.Bugs.find(query).populate('creator', 'name picture')
     return bugs
   }
 
   async findById(id) {
-    const bug = await dbContext.Bug.findById(id)
-    if (!bug) {
+    const data = await dbContext.Bugs.findOne({ _id: id }).populate('creator', 'name picture')
+    if (!data) {
       throw new BadRequest('Invalid Id')
     }
-    return bug
+    return data
   }
 
   async createBug(body) {
-    return await dbContext.Bug.create(body)
+    return await dbContext.Bugs.create(body)
+  }
+
+  async editBug(body) {
+    const found = await this.findById(body.id)
+    if (found.creatorId !== body.creatorId) {
+      throw new Forbidden('You Cannot modify another users Bug')
+    }
+    const data = await dbContext.Bugs.findOneAndUpdate({ _id: body.id, creatorId: body.creatorId }, body, { new: true })
+    return data
+  }
+
+  async deleteBug(id) {
+    const data = await dbContext.Bugs.findOneAndUpdate({ _id: id })
+    if (!data) {
+      throw new BadRequest('Invalid Id')
+    }
+    return 'Successfully Deleted Bug'
   }
 }
 

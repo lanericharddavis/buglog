@@ -1,14 +1,8 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <router-link class="navbar-brand d-flex" :to="{ name: 'Home' }">
-      <div class="d-flex flex-column align-items-center">
-        <img
-          alt="logo"
-          src="../assets/img/cw-logo.png"
-          height="45"
-        />
-      </div>
-    </router-link>
+    <div class="d-flex flex-column align-items-center text-light mr-3">
+      <h2>BugLog</h2>
+    </div>
     <button
       class="navbar-toggler"
       type="button"
@@ -17,19 +11,20 @@
       aria-controls="navbarText"
       aria-expanded="false"
       aria-label="Toggle navigation"
+      title="navbar dropdown menu"
     >
       <span class="navbar-toggler-icon" />
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <router-link :to="{ name: 'Home' }" class="nav-link">
+          <router-link :to="{ name: 'Home' }" class="nav-link" title="home page">
             Home
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link :to="{ name: 'About' }" class="nav-link">
-            About
+          <router-link :to="{ name: 'BugLogPage' }" class="nav-link" title="buglog page">
+            Log
           </router-link>
         </li>
       </ul>
@@ -38,6 +33,7 @@
           class="btn btn-outline-primary text-uppercase"
           @click="login"
           v-if="!user.isAuthenticated"
+          title="login"
         >
           Login
         </button>
@@ -46,6 +42,7 @@
           <div
             class="dropdown-toggle"
             @click="state.dropOpen = !state.dropOpen"
+            title="account dropdown menu"
           >
             <img
               :src="user.picture"
@@ -61,13 +58,14 @@
             @click="state.dropOpen = false"
           >
             <router-link :to="{ name: 'Account' }">
-              <div class="list-group-item list-group-item-action hoverable">
+              <div class="list-group-item list-group-item-action hoverable" title="account page">
                 Account
               </div>
             </router-link>
             <div
               class="list-group-item list-group-item-action hoverable"
               @click="logout"
+              title="logout"
             >
               logout
             </div>
