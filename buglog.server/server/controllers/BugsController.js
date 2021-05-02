@@ -14,7 +14,7 @@ export class BugsController extends BaseController {
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post('', this.createBug)
       .put('/:id', this.editBug)
-      .delete('/:id', this.deleteBug)
+      .delete('/:id', this.closeBug)
   }
 
   async getAll(req, res, next) {
@@ -49,7 +49,6 @@ export class BugsController extends BaseController {
       // NOTE NEVER TRUST THE CLIENT TO ADD THE CREATOR ID
       req.body.creatorId = req.userInfo.id
       const data = await bugsService.createBug(req.body)
-      // AppState.Boards.push(res.data)
       res.send(data)
     } catch (error) {
       next(error)
@@ -67,10 +66,10 @@ export class BugsController extends BaseController {
     }
   }
 
-  async deleteBug(req, res, next) {
+  async closeBug(req, res, next) {
     try {
       req.body.creatorId = req.userInfo.id
-      const data = await bugsService.deleteBug({ _id: req.params.id })
+      const data = await bugsService.closeBug(req.body)
       return res.send(data)
     } catch (error) {
       next(error)

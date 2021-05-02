@@ -4,6 +4,7 @@
   </header>
   <main>
     <router-view />
+    <CreateBugModal />
   </main>
   <footer>
     <div class="bg-dark text-light text-center p-4">
@@ -13,6 +14,7 @@
 </template>
 
 <script>
+import CreateBugModal from './components/CreateBugModal'
 import { computed } from 'vue'
 import { AppState } from './AppState'
 export default {
@@ -21,6 +23,9 @@ export default {
     return {
       appState: computed(() => AppState)
     }
+  },
+  components: {
+    CreateBugModal
   }
 }
 </script>

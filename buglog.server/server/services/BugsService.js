@@ -24,16 +24,18 @@ class BugsService {
     if (found.creatorId !== body.creatorId) {
       throw new Forbidden('You Cannot modify another users Bug')
     }
-    const data = await dbContext.Bugs.findOneAndUpdate({ _id: body.id, creatorId: body.creatorId }, body, { new: true })
+    const { closed, ...bodyExceptClosed } = body
+    const data = await dbContext.Bugs.findOneAndUpdate({ _id: body.id, creatorId: body.creatorId }, bodyExceptClosed, { new: true })
     return data
   }
 
-  async deleteBug(id) {
-    const data = await dbContext.Bugs.findOneAndUpdate({ _id: id })
-    if (!data) {
-      throw new BadRequest('Invalid Id')
+  async closeBug(body) {
+    const found = await this.findById(body.id)
+    if (found.creatorId !== body.creatorId) {
+      throw new Forbidden('You Cannot close another users Bug')
     }
-    return 'Successfully Deleted Bug'
+    const data = await dbContext.Bugs.findOneAndUpdate({ _id: body.id, creatorId: body.creatorId }, body.closed, { new: true }).populate('Bug')
+    return data
   }
 }
 

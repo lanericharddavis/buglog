@@ -3,11 +3,15 @@
     <div class="row d-flex justify-content-around align-items-center p-2">
       <div class="col-md-4">
         <h1 class="font-bold">
-          Current Bugs
+          Current Bug Reports
         </h1>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-outline-primary" title="create new bug report">
+        <button class="btn btn-outline-primary"
+                title="create new bug report"
+                data-toggle="modal"
+                data-target="#new-bug-form"
+        >
           New Report
         </button>
       </div>
@@ -18,12 +22,13 @@
                id="hideClosedBugsToggle"
                autocomplete="off"
                title="hide closed reports"
+               @click="filterClosedBugs"
         >
         <p>Hide Closed</p>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12 table-wrapper-scroll-y my-custom-scrollbar">
         <table>
           <tr>
             <th>Title</th>
@@ -31,54 +36,7 @@
             <th>Status</th>
             <th>Last Modified</th>
           </tr>
-          <tr>
-            <router-link :to="{ name: 'BugReportPage' }">
-              <td>Alfreds Futterkiste</td>
-            </router-link>
-            <td>Maria Anders</td>
-            <td>Open</td>
-            <td>12/12/12</td>
-          </tr>
-          <tr>
-            <router-link :to="{ name: 'BugReportPage' }">
-              <td>Centro comercial Moctezuma</td>
-            </router-link>
-            <td>Francisco Chang</td>
-            <td>Open</td>
-            <td>12/12/12</td>
-          </tr>
-          <tr>
-            <router-link :to="{ name: 'BugReportPage' }">
-              <td>Ernst Handel</td>
-            </router-link>
-            <td>Roland Mendel</td>
-            <td>Closed</td>
-            <td>12/12/12</td>
-          </tr>
-          <tr>
-            <router-link :to="{ name: 'BugReportPage' }">
-              <td>Island Trading</td>
-            </router-link>
-            <td>Helen Bennett</td>
-            <td>Open</td>
-            <td>12/12/12</td>
-          </tr>
-          <tr>
-            <router-link :to="{ name: 'BugReportPage' }">
-              <td>Laughing Bacchus Winecellars</td>
-            </router-link>
-            <td>Yoshi Tannamuri</td>
-            <td>Closed</td>
-            <td>12/12/12</td>
-          </tr>
-          <tr>
-            <router-link :to="{ name: 'BugReportPage' }">
-              <td>Magazzini Alimentari Riuniti</td>
-            </router-link>
-            <td>Giovanni Rovelli</td>
-            <td>Closed</td>
-            <td>12/12/12</td>
-          </tr>
+          <BugComponent v-for="bug in state.bugs" :key="bug.id" :bug-prop="bug" />
         </table>
       </div>
     </div>
@@ -86,10 +44,44 @@
 </template>
 
 <script>
+import { reactive, computed, onMounted } from 'vue'
+import { AppState } from '../AppState'
+import { bugsService } from '../services/BugsService'
+import Notification from '../utils/Notification'
+
 export default {
   name: 'BugLogPage',
   setup() {
-    return {}
+    const state = reactive({
+      newBug: {},
+      bugs: computed(() => AppState.bugs)
+    })
+
+    onMounted(async() => {
+      try {
+        await bugsService.getBugs()
+      } catch (error) {
+        Notification.toast(error, 'Cannot getAllBugs')
+      }
+    })
+    return {
+      state,
+      async createBug() {
+        try {
+          await bugsService.createBug(state.newBug)
+          state.newBug = {}
+        } catch (error) {
+          Notification.toast(error, 'Cannot Create New Report')
+        }
+      },
+      async filterClosedBugs() {
+        try {
+          await bugsService.filterClosedBugs()
+        } catch (error) {
+          Notification.toast(error, 'Cannot Filter Closed Reports')
+        }
+      }
+    }
   },
   components: {}
 }
@@ -119,5 +111,14 @@ tr:nth-child(even) {
 
 .font-bold{
   font-weight: 800;
+}
+
+.my-custom-scrollbar {
+position: relative;
+height: 450px;
+overflow: auto;
+}
+.table-wrapper-scroll-y {
+display: block;
 }
 </style>

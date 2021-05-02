@@ -1,16 +1,16 @@
 <template>
-  <div class="bug-report-page container-fluid">
+  <div class="example-bug-report-page container-fluid">
     <div class="row">
       <div class="col ml-3 mt-3">
         <p>
-          Report Title:
+          Title:
         </p>
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <h1 class="font-bold" v-if="state.bug">
-          {{ state.bug.title }}
+        <h1 class="font-bold">
+          Bug Report Page
         </h1>
       </div>
       <div class="col">
@@ -23,27 +23,23 @@
       <div class="col-6">
         <div class="row ml-3">
           <p>Reported by: </p>
-          <h5 v-if="state.bug">
-            {{ state.bug.creator.name }}
-          </h5>
+          <h5>Dusty Bottoms</h5>
         </div>
       </div>
       <div class="col-6">
         <div class="row">
           <p>Status: </p>
-          <h5 v-if="state.bug">
-            {{ state.bug.closed }}
-          </h5>
+          <h5>Open/Closed Status</h5>
         </div>
       </div>
     </div>
     <div class="row">
       <div class="col-md-2">
-        <img v-if="state.bug" class="creator-img ml-3" src="//placehold.it/100x100" alt="">
+        <img class="creator-img ml-3" src="//placehold.it/100x100/" alt="">
       </div>
       <div class="col-md-10">
-        <p v-if="state.bug" class="outline p-2">
-          {{ state.bug.description }}
+        <p class="outline p-2">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit magni voluptatum modi corporis fugiat. Perspiciatis, nostrum tempora possimus illum illo asperiores, architecto facere eum iusto earum officiis! Cum nisi itaque repellat tempore ipsum. Quo repudiandae velit iusto dolorem sapiente excepturi eaque unde, obcaecati pariatur nulla? Molestias corporis provident ab, perspiciatis itaque vero commodi animi libero error delectus perferendis temporibus minus labore dolor velit ipsam. Natus mollitia ducimus earum, laboriosam facilis magnam obcaecati a aspernatur tenetur cum. Consectetur id ipsa eos totam inventore nulla enim sed saepe molestias dolorem perferendis odio earum in adipisci dolorum ex, ut aspernatur, sapiente obcaecati nihil?
         </p>
       </div>
     </div>
@@ -79,16 +75,29 @@
               <img src="//placehold.it/100x100" alt="">
             </td>
             <td>
-              Authors Name
+              Alfreds Futterkiste
             </td>
             <td>
-              SAMPLE MESSAGE HERE
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit dicta blanditiis inventore itaque ipsam unde voluptatum nesciunt eaque laudantium maxime mollitia, ea ducimus aspernatur. Rem!
             </td>
             <td class="text-center">
               <i class="fas fa-trash" title="delete note"></i>
             </td>
           </tr>
-          <NoteComponent v-for="note in state.notes" :key="note.id" :note-prop="note" />
+          <tr>
+            <td>
+              <img src="//placehold.it/100x100" alt="">
+            </td>
+            <td>
+              Centro comercial Moctezuma
+            </td>
+            <td>
+              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Omnis eligendi accusamus nulla, modi quisquam qui!
+            </td>
+            <td class="text-center">
+              <i class="fas fa-trash" title="delete note"></i>
+            </td>
+          </tr>
         </table>
       </div>
     </div>
@@ -96,42 +105,20 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { AppState } from '../AppState'
-import { bugsService } from '../services/BugsService'
-import Notification from '../utils/Notification'
-
 export default {
-  name: 'BugReportPage',
-  props: {
-    bugProp: {
-      type: Object,
-      required: true
-    }
-  },
+  name: 'ExampleBugReportPage',
   setup() {
-    const route = useRoute()
-    const state = reactive({
-      bug: computed(() => AppState.activeBug),
-      note: computed(() => AppState.notes)
-    })
-    onMounted(async() => {
-      try {
-        await bugsService.getBugById(route.params.id)
-      } catch (error) {
-        Notification.toast('Error: ' + error, 'error')
-      }
-    })
-    return {
-      state
-    }
+    return {}
   },
   components: {}
 }
 </script>
 
 <style lang="scss" scoped>
+.creator-img{
+  border-radius: 50%;
+}
+
 .outline{
   outline: 1px solid black;
 }
