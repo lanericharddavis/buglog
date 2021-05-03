@@ -35,13 +35,16 @@ class BugsService {
     this.getBugById(bugId)
   }
 
-  async bid(bug) {
-    await api.put('api/bugs/' + bug.id + '/bid', bug)
-  }
-
-  async deleteBug(id) {
-    await api.delete('api/bugs/' + id)
-    AppState.bugs = AppState.bugs.filter(bug => bug.id !== id)
+  async closeOutBug(bug) {
+    debugger
+    let bugState = bug.closed
+    if (bugState === false) {
+      bugState = true
+    } else {
+      bugState = false
+    }
+    // NOTE bugState is changing to true but is not able to be editted on the bug object
+    await api.put('api/bugs/' + bug.id, bug.bugState)
   }
 }
 

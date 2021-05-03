@@ -1,10 +1,15 @@
 <template>
-  <tr class="bug-component">
+  <tr :class="{'text-danger' : bugProp.closed == true}" class="bug-component">
     <router-link :to="{ name: 'BugReportPage', params: {id: bugProp.id} }">
       <td>{{ bugProp.title }}</td>
     </router-link>
     <td>{{ bugProp.creator.name }}</td>
-    <td>{{ bugProp.closed }}</td>
+    <td v-if="bugProp.closed == false">
+      Open
+    </td>
+    <td v-else>
+      Closed
+    </td>
     <td>{{ bugProp.updatedAt }}</td>
   </tr>
 </template>

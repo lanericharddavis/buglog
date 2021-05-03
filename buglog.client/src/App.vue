@@ -6,6 +6,7 @@
     <router-view />
     <CreateBugModal />
     <CreateNoteModal />
+    <!-- <moment /> -->
   </main>
   <footer>
     <div class="bg-dark text-light text-center p-4">
@@ -16,8 +17,10 @@
 
 <script>
 import CreateBugModal from './components/CreateBugModal'
+import CreateNoteModal from './components/CreateNoteModal'
 import { computed } from 'vue'
 import { AppState } from './AppState'
+// import moment from 'vue-moment'
 export default {
   name: 'App',
   setup() {
@@ -26,7 +29,9 @@ export default {
     }
   },
   components: {
-    CreateBugModal
+    CreateBugModal,
+    CreateNoteModal
+    // moment
   }
 }
 </script>

@@ -58,10 +58,11 @@ export default {
       required: true
     }
   },
-  setup(props) {
+  setup() {
+    // NOTE why can't I pass props through setup here to attach the bug ID to the new Note without the console giving me "cannot read property 'id' of undefined"
     const state = reactive({
       newNote: {
-        bug: props.bugProp.id
+        // bug: props.bugProp.id
       }
     })
     return {

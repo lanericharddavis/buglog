@@ -17,18 +17,18 @@ class NotesService {
   }
 
   async createNote(newNote) {
-    await api.post('api/notes/', newNote)
-    this.getAllNotesByBugId(newNote.bug)
-  }
-
-  async addNote(newNote) {
-    await api.post(`api/notes/${newNote.NoteId}/notes`, newNote)
-    this.getNoteById(newNote.NoteId)
+    const res = await api.post('api/notes/', newNote)
+    AppState.notes.push(res.data)
+    // this.getAllNotesByBugId(newNote.bug)
   }
 
   async deleteNote(id) {
-    await api.delete('api/notes/' + id)
-    AppState.Notes = AppState.Notes.filter(Note => Note.id !== id)
+    try {
+      await api.delete('api/notes/' + id)
+      AppState.notes = AppState.notes.filter(note => note.id !== id)
+    } catch (error) {
+      Notification.toast('Error:' + error, 'error')
+    }
   }
 }
 

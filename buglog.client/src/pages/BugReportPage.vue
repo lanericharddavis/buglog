@@ -13,8 +13,8 @@
           {{ state.bug.title }}
         </h1>
       </div>
-      <div class="col">
-        <button class="btn btn-outline-danger" title="close this bug">
+      <div class="col" v-if="state.bug">
+        <button :disabled="state.bug.closed == true" class="btn btn-outline-danger" title="close this bug" @click="closeOutBug">
           Close
         </button>
       </div>
@@ -34,12 +34,19 @@
           <h5 v-if="state.bug">
             {{ state.bug.closed }}
           </h5>
+          <!-- NOTE why does this not work? -->
+          <!-- <h5 v-if="state.bug.closed == false">
+            Open
+          </h5>
+          <h5 v-else>
+            Closed
+          </h5> -->
         </div>
       </div>
     </div>
     <div class="row">
       <div class="col-md-2">
-        <img v-if="state.bug" class="creator-img ml-3" src="//placehold.it/100x100" alt="">
+        <img v-if="state.bug" class="creator-img ml-3" :src="state.bug.creator.picture" alt="">
       </div>
       <div class="col-md-10">
         <p v-if="state.bug" class="outline p-2">
@@ -80,19 +87,20 @@
           </tr>
           <tr>
             <td>
-              <img src="//placehold.it/100x100" alt="">
+              <img v-if="state.bug" class="creator-img ml-3" :src="state.bug.creator.picture" alt="">
             </td>
             <td>
-              Authors Name
+              SAMPLE Authors Name
             </td>
             <td>
-              SAMPLE MESSAGE HERE
+              SAMPLE MESSAGE HERE Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos repellat recusandae laborum repellendus totam explicabo!
             </td>
             <td class="text-center">
-              <i class="fas fa-trash" title="delete note"></i>
+              <i class="fas fa-trash trash-cursor" title="delete note" @click="deleteNote"></i>
             </td>
           </tr>
-          {{ state.note }}
+          <!-- NOTE to confirm I'm getting data from server -->
+          <!-- {{ state.note }} -->
           <NoteComponent v-for="note in state.note" :key="note.id" :note-prop="note" />
         </table>
       </div>
@@ -116,7 +124,7 @@ export default {
       required: true
     }
   },
-  setup() {
+  setup(props) {
     const route = useRoute()
     const state = reactive({
       bug: computed(() => AppState.activeBug),
@@ -135,7 +143,25 @@ export default {
       }
     })
     return {
-      state
+      state,
+      async deleteNote() {
+        try {
+          window.confirm('Are You Sure? Confirm to Delete Note.')
+          await notesService.deleteNote(props.noteProp.id)
+          Notification.toast('Note Deleted')
+        } catch (error) {
+          Notification.toast('Error: ' + error, 'error')
+        }
+      },
+      async closeOutBug() {
+        try {
+          window.confirm('Are You Sure? Confirm to Close Out This Bug Report.')
+          await bugsService.closeOutBug(state.bug)
+          Notification.toast('Bug Report Closed')
+        } catch (error) {
+          Notification.toast('Cannot Close Out Bug Report')
+        }
+      }
     }
   },
   components: {}
@@ -143,6 +169,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.trash-cursor{
+  cursor: pointer;
+}
+
 .outline{
   outline: 1px solid black;
 }
