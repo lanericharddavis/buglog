@@ -10,7 +10,7 @@
     <td v-else>
       Closed
     </td>
-    <td>{{ bugProp.updatedAt }}</td>
+    <td>{{ Date.UTC(bugProp.updatedAt) }}</td>
   </tr>
 </template>
 

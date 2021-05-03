@@ -1,11 +1,11 @@
 <template>
   <tr class="note-component">
-    <td> <img v-if="state.bug" class="creator-img ml-3" :src="state.bug.creator.picture" alt=""></td>
-    <td v-if="state.note">
-      {{ state.note.creator.name }}
+    <td> <img class="creator-img ml-3" :src="noteProp.creator.picture" alt=""></td>
+    <td>
+      {{ noteProp.creator.name }}
     </td>
-    <td v-if="state.note">
-      {{ state.note.body }}
+    <td>
+      {{ noteProp.body }}
     </td>
     <td class="text-center">
       <i class="fas fa-trash trash-cursor" title="delete note" @click="deleteNote"></i>
@@ -16,9 +16,9 @@
 <script>
 import { reactive, computed, onMounted } from 'vue'
 import { AppState } from '../AppState'
-import { useRoute } from 'vue-router'
+// import { useRoute } from 'vue-router'
 import Notification from '../utils/Notification'
-import { bugsService } from '../services/BugsService'
+// import { bugsService } from '../services/BugsService'
 import { notesService } from '../services/NotesService'
 
 export default {
@@ -30,16 +30,16 @@ export default {
     }
   },
   setup(props) {
-    const route = useRoute()
+    // const route = useRoute()
     const state = reactive({
       note: computed(() => AppState.activeNote)
     })
     onMounted(async() => {
-      try {
-        await bugsService.getNotesByBug(route.params.id)
-      } catch (error) {
-        Notification.toast('Cannot getBug by url')
-      }
+      // try {
+      //   await bugsService.getNotesByBug(route.params.id)
+      // } catch (error) {
+      //   Notification.toast('Cannot getBug by url')
+      // }
     })
 
     return {

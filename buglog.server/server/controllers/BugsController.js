@@ -69,7 +69,7 @@ export class BugsController extends BaseController {
   async closeBug(req, res, next) {
     try {
       req.body.creatorId = req.userInfo.id
-      const data = await bugsService.closeBug(req.body)
+      const data = await bugsService.closeBug(req.body, req.params.id)
       return res.send(data)
     } catch (error) {
       next(error)

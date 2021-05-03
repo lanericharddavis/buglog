@@ -15,7 +15,12 @@
       </div>
       <div class="col" v-if="state.bug">
         <button :disabled="state.bug.closed == true" class="btn btn-outline-danger" title="close this bug" @click="closeOutBug">
-          Close
+          Close Out Report
+        </button>
+      </div>
+      <div class="col" v-if="state.bug">
+        <button :disabled="state.bug.closed == true" class="btn btn-outline-info" title="close this bug" @click="editBug">
+          Edit Report
         </button>
       </div>
     </div>
@@ -85,22 +90,6 @@
               Delete
             </th>
           </tr>
-          <tr>
-            <td>
-              <img v-if="state.bug" class="creator-img ml-3" :src="state.bug.creator.picture" alt="">
-            </td>
-            <td>
-              SAMPLE Authors Name
-            </td>
-            <td>
-              SAMPLE MESSAGE HERE Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos repellat recusandae laborum repellendus totam explicabo!
-            </td>
-            <td class="text-center">
-              <i class="fas fa-trash trash-cursor" title="delete note" @click="deleteNote"></i>
-            </td>
-          </tr>
-          <!-- NOTE to confirm I'm getting data from server -->
-          <!-- {{ state.note }} -->
           <NoteComponent v-for="note in state.note" :key="note.id" :note-prop="note" />
         </table>
       </div>
@@ -148,6 +137,14 @@ export default {
         try {
           window.confirm('Are You Sure? Confirm to Delete Note.')
           await notesService.deleteNote(props.noteProp.id)
+          Notification.toast('Note Deleted')
+        } catch (error) {
+          Notification.toast('Error: ' + error, 'error')
+        }
+      },
+      async editBug() {
+        try {
+          await bugsService.editBug(state.bug)
           Notification.toast('Note Deleted')
         } catch (error) {
           Notification.toast('Error: ' + error, 'error')
