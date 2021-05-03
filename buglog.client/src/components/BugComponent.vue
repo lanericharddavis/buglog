@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted } from 'vue'
-import { AppState } from '../AppState'
+// import { reactive, computed, onMounted } from 'vue'
+// import { AppState } from '../AppState'
 
 export default {
   name: 'BugComponent',
@@ -22,15 +22,15 @@ export default {
     }
   },
   setup() {
-    const state = reactive({
-      bug: computed(() => AppState.bugs)
-    })
-    onMounted(async() => {
+    // const state = reactive({
+    //   bug: computed(() => AppState.bugs)
+    // })
+    // onMounted(async() => {
 
-    })
+    // })
 
     return {
-      state
+      // state
       // timeDateStamp() {
       //   const newtimeDate = newtimeDate.toDateString(bugProp.createdAt)
       // }

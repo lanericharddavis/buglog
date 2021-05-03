@@ -52,8 +52,12 @@
         <h5>Notes</h5>
       </div>
       <div class="col">
-        <button class="btn btn-outline-success" title="add note">
-          Add
+        <button class="btn btn-outline-success"
+                title="create new note"
+                data-toggle="modal"
+                data-target="#new-note-form"
+        >
+          New Note
         </button>
       </div>
     </div>
@@ -88,7 +92,8 @@
               <i class="fas fa-trash" title="delete note"></i>
             </td>
           </tr>
-          <NoteComponent v-for="note in state.notes" :key="note.id" :note-prop="note" />
+          {{ state.note }}
+          <NoteComponent v-for="note in state.note" :key="note.id" :note-prop="note" />
         </table>
       </div>
     </div>
@@ -100,6 +105,7 @@ import { reactive, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { AppState } from '../AppState'
 import { bugsService } from '../services/BugsService'
+import { notesService } from '../services/NotesService'
 import Notification from '../utils/Notification'
 
 export default {
@@ -114,11 +120,16 @@ export default {
     const route = useRoute()
     const state = reactive({
       bug: computed(() => AppState.activeBug),
-      note: computed(() => AppState.notes)
+      note: computed(() => AppState.activeNote)
     })
     onMounted(async() => {
       try {
         await bugsService.getBugById(route.params.id)
+      } catch (error) {
+        Notification.toast('Error: ' + error, 'error')
+      }
+      try {
+        await notesService.getNotesByBugId(route.params.id)
       } catch (error) {
         Notification.toast('Error: ' + error, 'error')
       }

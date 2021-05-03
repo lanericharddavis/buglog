@@ -1,6 +1,6 @@
 <template>
   <div class="modal fade"
-       id="new-bug-form"
+       id="new-note-form"
        tabindex="-1"
        role="dialog"
        aria-labelledby="exampleModalLabel"
@@ -10,34 +10,24 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
-            New Bug Report
+            New Note
           </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form @submit.prevent="createBug">
+        <form @submit.prevent="createNote">
           <div class="modal-body">
             <div class="form-group">
-              <label for="title">Title</label>
+              <label for="note">Note</label>
               <input type="text"
                      class="form-control"
-                     id="title"
-                     placeholder="Title..."
-                     v-model="state.newBug.title"
+                     id="note"
+                     placeholder="Note..."
+                     rows="3"
+                     v-model="state.newNote.description"
                      required
               >
-            </div>
-            <div class="form-group">
-              <label for="description">Description</label>
-              <textarea type="text"
-                        class="form-control"
-                        id="description"
-                        placeholder="Bug Description..."
-                        rows="3"
-                        v-model="state.newBug.description"
-                        required
-              ></textarea>
             </div>
           </div>
           <div class="modal-footer">
@@ -56,30 +46,37 @@
 
 <script>
 import { reactive } from 'vue'
-import { bugsService } from '../services/BugsService'
+import { notesService } from '../services/NotesService'
 import $ from 'jquery'
 import Notification from '../utils/Notification'
 
 export default {
-  name: 'BugModal',
-  setup() {
+  name: 'NoteModal',
+  props: {
+    bugProp: {
+      type: Object,
+      required: true
+    }
+  },
+  setup(props) {
     const state = reactive({
-      newBug: {
+      newNote: {
+        bug: props.bugProp.id
       }
     })
     return {
       state,
-      async createBug() {
+      async createNote() {
         try {
-          await bugsService.createBug(state.newBug)
+          await notesService.createNote(state.newNote)
           // NOTE reseting to the empty object resets the input fields
-          state.newBug = {}
-          Notification.toast('Bug Report Created!', 'success')
+          state.newNote = {}
+          Notification.toast('Note Report Created!', 'success')
           // REVIEW CLOSING THE MODAL
           // eslint-disable-next-line no-undef
-          $('#new-bug-form').modal('hide')
+          $('#new-note-form').modal('hide')
         } catch (error) {
-          Notification.toast('Cannot Create Bug Report', 'error')
+          Notification.toast('Cannot Create Note Note', 'error')
         }
       }
     }

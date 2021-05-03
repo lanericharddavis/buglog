@@ -1,6 +1,6 @@
 
 import { AppState } from '../AppState.js'
-import router from '../router.js'
+// import router from '../router.js'
 import { api } from './AxiosService.js'
 
 class BugsService {
@@ -9,15 +9,20 @@ class BugsService {
     AppState.bugs = res.data
   }
 
+  async getBug(id) {
+    const res = await api.get('api/bugs/' + id)
+    AppState.activeBug = res.data
+  }
+
   async getBugById(id) {
     const res = await api.get('api/bugs/' + id)
     AppState.activeBug = res.data
   }
 
   async createBug(newBug) {
-    const res = await api.post('api/bugs', newBug)
+    const res = await api.post('api/bugs/', newBug)
     AppState.bugs.push(res.data)
-    router.push({ name: 'BugDetails', params: { id: res.data.id } })
+    // router.push({ name: 'BugDetails', params: { id: res.data.id } })
   }
 
   async addNote(newNote) {
