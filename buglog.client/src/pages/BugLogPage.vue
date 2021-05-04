@@ -5,6 +5,8 @@
         <h1 class="font-bold">
           Current Bug Reports
         </h1>
+        <!-- NOTE Not sure how to go about passing the state of the checkbox through for toggling my filter -->
+        <!-- v-model="state.toggle.toggleState" -->
         <div class="btn-group d-flex align-items-center" data-toggle="buttons">
           <input class="btn btn-primary m-2 mb-3"
                  type="checkbox"
@@ -12,12 +14,13 @@
                  id="hideClosedBugsToggle"
                  autocomplete="off"
                  title="hide closed reports"
-                 v-model="state.filterClosedBugs.closed"
                  @click="filterClosedBugs"
           >
-          <p>Hide Closed Reports</p>
+          <p>Filter Closed Reports</p>
         </div>
       </div>
+      <!-- NOTE Review how to only allow authenticated user see features (buttons)  I had the following line in the div below and it wasn't working  -->
+      <!-- v-if="state.user.isAuthenticated && state.account.id === state.bugs.creatorId" -->
       <div class="col-md-5 justify-content-center">
         <form class="form" @submit.prevent="createBug">
           <div class="form-group m-2">
@@ -31,6 +34,7 @@
                    aria-describedby="bugInput"
                    placeholder="Bug Report Title..."
                    v-model="state.newBug.title"
+                   required
             >
           </div>
           <div class="form-group m-2">
@@ -41,6 +45,7 @@
                       placeholder="Description..."
                       rows="3"
                       v-model="state.newBug.description"
+                      required
             ></textarea>
           </div>
         </form>
@@ -72,9 +77,12 @@ export default {
   name: 'BugLogPage',
   setup() {
     const state = reactive({
-      filterClosedBugs: {},
+      // NOTE Can I pass the state of a checkbox through a v-model?
+      // toggle: boolean?,
       newBug: {},
-      bugs: computed(() => AppState.bugs)
+      bugs: computed(() => AppState.bugs),
+      user: computed(() => AppState.user),
+      account: computed(() => AppState.account)
     })
 
     onMounted(async() => {
@@ -92,23 +100,20 @@ export default {
           // NOTE reseting to the empty object resets the input fields
           state.newBug = {}
           Notification.toast('Bug Report Created!', 'success')
-          // REVIEW CLOSING THE MODAL
-          // eslint-disable-next-line no-undef
-          $('#new-bug-form').modal('hide')
         } catch (error) {
           Notification.toast('Cannot Create Bug Report', 'error')
         }
       },
       async filterClosedBugs() {
         try {
-          await bugsService.filterClosedBugs(state.filterClosedBugs.closed)
+          await bugsService.filterClosedBugs(state.toggle)
         } catch (error) {
-          Notification.toast(error, 'Cannot Filter Closed Reports')
+          Notification.toast('Cannot Filter Closed Reports', 'error')
         }
       }
     }
   },
-  components: {}
+  components: { }
 }
 </script>
 

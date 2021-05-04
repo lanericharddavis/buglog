@@ -21,6 +21,7 @@ class BugsService {
 
   async editBug(newBug, id) {
     const res = await api.put(`api/bugs/${id}`, newBug)
+    // NOTE the put request goes through but it is not being assigned to the const 'res' and not being pushed to AppState.activeBug.  ???
     AppState.activeBug.push(res.data)
     this.getBugById(id)
   }
@@ -39,6 +40,15 @@ class BugsService {
   async deleteNote(bugId, noteId) {
     await api.delete(`api/Bugs/${bugId}/notes/${noteId}`)
     this.getBugById(bugId)
+  }
+
+  async filterClosedBugs(toggleState) {
+    const res = await api.get('api/bugs')
+    if (toggleState === true) {
+      res.filter(bug => bug.closed === true)
+    } else {
+      this.getBugs()
+    }
   }
 
   async closeOutBug(bug) {

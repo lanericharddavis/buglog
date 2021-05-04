@@ -28,6 +28,16 @@
                      required
               >
             </div>
+            <!-- <div class="form-group">
+              <label for="reportedBy">Edit Created By</label>
+              <input type="text"
+                     class="form-control"
+                     id="bugReportedBy"
+                     placeholder="reportedBy..."
+                     v-model="state.editedBug.creator.name"
+                     required
+              >
+            </div> -->
             <div class="form-group">
               <label for="description">Description</label>
               <textarea type="text"
@@ -58,7 +68,7 @@
 import { AppState } from '../AppState'
 import { reactive, computed } from 'vue'
 import { bugsService } from '../services/BugsService'
-import $ from 'jquery'
+// import $ from 'jquery'
 import Notification from '../utils/Notification'
 import { useRoute } from 'vue-router'
 
@@ -67,8 +77,7 @@ export default {
   setup() {
     const route = useRoute()
     const state = reactive({
-      editedBug: {
-      },
+      editedBug: {},
       bug: computed(() => AppState.activeBug)
     })
     return {
@@ -78,11 +87,11 @@ export default {
         try {
           await bugsService.editBug(state.editedBug, route.params.id)
           // NOTE reseting to the empty object resets the input fields
-          state.editedBug = {}
+          // state.editedBug = {}
           Notification.toast('Bug Report Edited!', 'success')
           // REVIEW CLOSING THE MODAL
           // eslint-disable-next-line no-undef
-          $('#edit-bug-form').modal('hide')
+          // $('#edit-bug-form').modal('hide')
         } catch (error) {
           Notification.toast('Cannot Edited Report', 'error')
         }

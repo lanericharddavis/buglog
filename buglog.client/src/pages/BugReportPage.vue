@@ -156,7 +156,9 @@ export default {
         bug: route.params.id
       },
       bug: computed(() => AppState.activeBug),
-      note: computed(() => AppState.activeNote)
+      note: computed(() => AppState.activeNote),
+      user: computed(() => AppState.user),
+      account: computed(() => AppState.account)
     })
     onMounted(async() => {
       try {
