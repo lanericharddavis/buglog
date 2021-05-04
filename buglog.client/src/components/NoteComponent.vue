@@ -16,7 +16,7 @@
 <script>
 import { reactive, computed, onMounted } from 'vue'
 import { AppState } from '../AppState'
-// import { useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import Notification from '../utils/Notification'
 // import { bugsService } from '../services/BugsService'
 import { notesService } from '../services/NotesService'
@@ -30,25 +30,30 @@ export default {
     }
   },
   setup(props) {
-    // const route = useRoute()
+    const route = useRoute()
     const state = reactive({
       note: computed(() => AppState.activeNote)
     })
     onMounted(async() => {
-      // try {
-      //   await bugsService.getNotesByBug(route.params.id)
-      // } catch (error) {
-      //   Notification.toast('Cannot getBug by url')
-      // }
+      try {
+        await notesService.getNotesByBugId(route.params.id)
+      } catch (error) {
+        Notification.toast('Cannot getBug by url')
+      }
     })
 
     return {
       state,
       async deleteNote() {
         try {
-          window.confirm('Are You Sure? Confirm to Delete')
-          await notesService.deleteNote(props.noteProp.id)
-          Notification.toast('Note Deleted')
+          const confirmation = window.confirm('Are You Sure? Confirm to Delete Note.')
+          if (confirmation === true) {
+            await notesService.deleteNote(props.noteProp.id)
+            Notification.toast('Note Deleted!', 'success')
+            await notesService.getNotesByBugId(route.params.id)
+          } else {
+            Notification.toast('cancel')
+          }
         } catch (error) {
           Notification.toast('Error: ' + error, 'error')
         }

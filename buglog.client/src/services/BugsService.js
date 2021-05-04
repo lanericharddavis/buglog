@@ -1,6 +1,6 @@
 
 import { AppState } from '../AppState.js'
-// import router from '../router.js'
+import router from '../router.js'
 import { api } from './AxiosService.js'
 
 class BugsService {
@@ -19,10 +19,16 @@ class BugsService {
     AppState.activeBug = res.data
   }
 
+  async editBug(newBug, id) {
+    const res = await api.put(`api/bugs/${id}`, newBug)
+    AppState.activeBug.push(res.data)
+    this.getBugById(id)
+  }
+
   async createBug(newBug) {
     const res = await api.post('api/bugs/', newBug)
     AppState.bugs.push(res.data)
-    // router.push({ name: 'BugDetails', params: { id: res.data.id } })
+    router.push({ name: 'BugReportPage', params: { id: res.data.id } })
   }
 
   async addNote(newNote) {
@@ -36,16 +42,18 @@ class BugsService {
   }
 
   async closeOutBug(bug) {
-    debugger
-    let bugState = bug.closed
-    if (bugState === false) {
-      bugState = true
+    if (bug.closed === false) {
+      bug.closed = true
     } else {
-      bugState = false
+      bug.closed = false
     }
-    // NOTE bugState is changing to true but is not able to be editted on the bug object
-    await api.put('api/bugs/' + bug.id, bug.bugState)
+    const bugWithNewBugState = await api.put('api/bugs/' + bug.id, bug)
+    AppState.activeBug = bugWithNewBugState.data
   }
+
+  // async filterClosedBugs(checkedBox) {
+  //   if (checkedBox.closed === true)
+  // }
 }
 
 export const bugsService = new BugsService()

@@ -4,8 +4,9 @@
   </header>
   <main>
     <router-view />
-    <CreateBugModal />
+    <!-- <CreateBugModal /> -->
     <CreateNoteModal />
+    <EditBugModal />
     <!-- <moment /> -->
   </main>
   <footer>
@@ -16,8 +17,9 @@
 </template>
 
 <script>
-import CreateBugModal from './components/CreateBugModal'
+// import CreateBugModal from './components/CreateBugModal'
 import CreateNoteModal from './components/CreateNoteModal'
+import EditBugModal from './components/EditBugModal'
 import { computed } from 'vue'
 import { AppState } from './AppState'
 // import moment from 'vue-moment'
@@ -29,8 +31,9 @@ export default {
     }
   },
   components: {
-    CreateBugModal,
-    CreateNoteModal
+    // CreateBugModal,
+    CreateNoteModal,
+    EditBugModal
     // moment
   }
 }

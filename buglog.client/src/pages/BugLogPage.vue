@@ -5,26 +5,45 @@
         <h1 class="font-bold">
           Current Bug Reports
         </h1>
+        <div class="btn-group d-flex align-items-center" data-toggle="buttons">
+          <input class="btn btn-primary m-2 mb-3"
+                 type="checkbox"
+                 name="hideClosedBugs"
+                 id="hideClosedBugsToggle"
+                 autocomplete="off"
+                 title="hide closed reports"
+                 v-model="state.filterClosedBugs.closed"
+                 @click="filterClosedBugs"
+          >
+          <p>Hide Closed Reports</p>
+        </div>
       </div>
-      <div class="col-md-2">
-        <button class="btn btn-outline-primary"
-                title="create new bug report"
-                data-toggle="modal"
-                data-target="#new-bug-form"
-        >
-          New Report
-        </button>
-      </div>
-      <div class="btn-group d-flex align-items-center" data-toggle="buttons">
-        <input class="btn btn-primary m-2 mb-3"
-               type="checkbox"
-               name="hideClosedBugs"
-               id="hideClosedBugsToggle"
-               autocomplete="off"
-               title="hide closed reports"
-               @click="filterClosedBugs"
-        >
-        <p>Hide Closed</p>
+      <div class="col-md-5 justify-content-center">
+        <form class="form" @submit.prevent="createBug">
+          <div class="form-group m-2">
+            <label for="bugInput" class="m-2"><strong>Create New Bug Report</strong></label>
+            <button type="submit" class="btn btn-primary pb-1" title="submit bug report">
+              <strong>Submit</strong>
+            </button>
+            <input type="text"
+                   class="form-control pt-1"
+                   id="bugInput"
+                   aria-describedby="bugInput"
+                   placeholder="Bug Report Title..."
+                   v-model="state.newBug.title"
+            >
+          </div>
+          <div class="form-group m-2">
+            <textarea type="text"
+                      class="form-control"
+                      id="bugDescriptionInput"
+                      aria-describedby="bugDescriptionInput"
+                      placeholder="Description..."
+                      rows="3"
+                      v-model="state.newBug.description"
+            ></textarea>
+          </div>
+        </form>
       </div>
     </div>
     <div class="row">
@@ -53,6 +72,7 @@ export default {
   name: 'BugLogPage',
   setup() {
     const state = reactive({
+      filterClosedBugs: {},
       newBug: {},
       bugs: computed(() => AppState.bugs)
     })
@@ -69,14 +89,19 @@ export default {
       async createBug() {
         try {
           await bugsService.createBug(state.newBug)
+          // NOTE reseting to the empty object resets the input fields
           state.newBug = {}
+          Notification.toast('Bug Report Created!', 'success')
+          // REVIEW CLOSING THE MODAL
+          // eslint-disable-next-line no-undef
+          $('#new-bug-form').modal('hide')
         } catch (error) {
-          Notification.toast(error, 'Cannot Create New Report')
+          Notification.toast('Cannot Create Bug Report', 'error')
         }
       },
       async filterClosedBugs() {
         try {
-          await bugsService.filterClosedBugs()
+          await bugsService.filterClosedBugs(state.filterClosedBugs.closed)
         } catch (error) {
           Notification.toast(error, 'Cannot Filter Closed Reports')
         }

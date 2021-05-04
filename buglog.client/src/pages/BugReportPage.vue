@@ -18,8 +18,25 @@
           Close Out Report
         </button>
       </div>
+
+      <!-- <div class="col">
+        <button class="btn btn-outline-info"
+                title="edit this bug report"
+                data-toggle="modal"
+                data-target="#edit-bug-form"
+                :disabled="state.bug.closed == true"
+        >
+          Edit Report
+        </button>
+      </div> -->
+
       <div class="col" v-if="state.bug">
-        <button :disabled="state.bug.closed == true" class="btn btn-outline-info" title="close this bug" @click="editBug">
+        <button :disabled="state.bug.closed == true"
+                class="btn btn-outline-info"
+                title="close this bug"
+                data-toggle="modal"
+                data-target="#edit-bug-form"
+        >
           Edit Report
         </button>
       </div>
@@ -59,11 +76,30 @@
         </p>
       </div>
     </div>
-    <div class="row pt-5 pb-2">
-      <div class="col">
+    <div class="row pt-5 pb-2 justify-content-around">
+      <div class="col-md-2">
         <h5>Notes</h5>
       </div>
-      <div class="col">
+      <div class="col-md-10 d-flex justify-content-center">
+        <form class="form-inline" @submit.prevent="createNote">
+          <div class="form-group m-2">
+            <label for="noteInput" class="m-2"><strong>Create New Note</strong></label>
+            <button type="submit" class="btn btn-primary pb-1 mr-2" title="submit note">
+              <strong>Submit</strong>
+            </button>
+            <textarea type="text"
+                      class="form-control pt-1 w-100"
+                      id="noteInput"
+                      aria-describedby="noteInput"
+                      placeholder="Your Note..."
+                      rows="2"
+                      v-model="state.newNote.body"
+                      required
+            ></textarea>
+          </div>
+        </form>
+      </div>
+      <!-- <div class="col">
         <button class="btn btn-outline-success"
                 title="create new note"
                 data-toggle="modal"
@@ -71,7 +107,7 @@
         >
           New Note
         </button>
-      </div>
+      </div> -->
     </div>
     <div class="row">
       <div class="col p-3">
@@ -116,6 +152,9 @@ export default {
   setup(props) {
     const route = useRoute()
     const state = reactive({
+      newNote: {
+        bug: route.params.id
+      },
       bug: computed(() => AppState.activeBug),
       note: computed(() => AppState.activeNote)
     })
@@ -133,30 +172,37 @@ export default {
     })
     return {
       state,
-      async deleteNote() {
+      async createNote() {
         try {
-          window.confirm('Are You Sure? Confirm to Delete Note.')
-          await notesService.deleteNote(props.noteProp.id)
-          Notification.toast('Note Deleted')
+          await notesService.createNote(state.newNote)
+          // NOTE reseting to the empty object resets the input fields
+          state.newNote = {}
+          Notification.toast('Note Created!', 'success')
+          // REVIEW CLOSING THE MODAL
+          // eslint-disable-next-line no-undef
         } catch (error) {
-          Notification.toast('Error: ' + error, 'error')
+          Notification.toast('Cannot Create Note', 'error')
         }
       },
       async editBug() {
         try {
           await bugsService.editBug(state.bug)
-          Notification.toast('Note Deleted')
+          Notification.toast('Note Edited')
         } catch (error) {
           Notification.toast('Error: ' + error, 'error')
         }
       },
       async closeOutBug() {
         try {
-          window.confirm('Are You Sure? Confirm to Close Out This Bug Report.')
-          await bugsService.closeOutBug(state.bug)
-          Notification.toast('Bug Report Closed')
+          const confirmation = window.confirm('Are You Sure? Confirm to Close Out This Bug Report.')
+          if (confirmation === true) {
+            await bugsService.closeOutBug(state.bug)
+            Notification.toast('Bug Report Closed', 'success')
+          } else {
+            Notification.toast('cancel')
+          }
         } catch (error) {
-          Notification.toast('Cannot Close Out Bug Report')
+          Notification.toast('Cannot Close Out Bug Report', 'error')
         }
       }
     }
@@ -166,6 +212,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+textarea{
+  width: 100%;
+}
 .trash-cursor{
   cursor: pointer;
 }

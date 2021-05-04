@@ -1,6 +1,6 @@
 <template>
   <div class="modal fade"
-       id="new-note-form"
+       id="edit-bug-form"
        tabindex="-1"
        role="dialog"
        aria-labelledby="exampleModalLabel"
@@ -10,24 +10,34 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
-            New Note
+            Edit Bug Report
           </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form @submit.prevent="createNote">
+        <form @submit.prevent="editBug">
           <div class="modal-body">
             <div class="form-group">
-              <label for="note">Note</label>
+              <label for="title">Title</label>
               <input type="text"
                      class="form-control"
-                     id="note"
-                     placeholder="Note..."
-                     rows="3"
-                     v-model="state.newNote.description"
+                     id="bugTitle"
+                     placeholder="Title..."
+                     v-model="state.editedBug.title"
                      required
               >
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea type="text"
+                        class="form-control"
+                        id="bugDescription"
+                        placeholder="Bug Description..."
+                        rows="3"
+                        v-model="state.editedBug.description"
+                        required
+              ></textarea>
             </div>
           </div>
           <div class="modal-footer">
@@ -45,42 +55,36 @@
 </template>
 
 <script>
-import { useRoute } from 'vue-router'
-import { reactive } from 'vue'
-import { notesService } from '../services/NotesService'
+import { AppState } from '../AppState'
+import { reactive, computed } from 'vue'
+import { bugsService } from '../services/BugsService'
 import $ from 'jquery'
 import Notification from '../utils/Notification'
+import { useRoute } from 'vue-router'
 
 export default {
-  name: 'NoteModal',
-  props: {
-    bugProp: {
-      type: Object,
-      required: true
-    }
-  },
+  name: 'BugModal',
   setup() {
-    const route = useRoute
-    // NOTE why can't I pass props through setup here to attach the bug ID to the new Note without the console giving me "cannot read property 'id' of undefined"
+    const route = useRoute()
     const state = reactive({
-      newNote: {
-        // bug: route.params.id
-      }
+      editedBug: {
+      },
+      bug: computed(() => AppState.activeBug)
     })
     return {
       state,
       route,
-      async createNote() {
+      async editBug() {
         try {
-          await notesService.createNote(state.newNote)
+          await bugsService.editBug(state.editedBug, route.params.id)
           // NOTE reseting to the empty object resets the input fields
-          state.newNote = {}
-          Notification.toast('Note Report Created!', 'success')
+          state.editedBug = {}
+          Notification.toast('Bug Report Edited!', 'success')
           // REVIEW CLOSING THE MODAL
           // eslint-disable-next-line no-undef
-          $('#new-note-form').modal('hide')
+          $('#edit-bug-form').modal('hide')
         } catch (error) {
-          Notification.toast('Cannot Create Note Note', 'error')
+          Notification.toast('Cannot Edited Report', 'error')
         }
       }
     }

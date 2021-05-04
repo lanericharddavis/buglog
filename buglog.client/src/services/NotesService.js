@@ -1,6 +1,5 @@
 
 import { AppState } from '../AppState.js'
-// import router from '../router.js'
 import { api } from './AxiosService.js'
 import { logger } from '../utils/Logger'
 
@@ -19,13 +18,13 @@ class NotesService {
   async createNote(newNote) {
     const res = await api.post('api/notes/', newNote)
     AppState.notes.push(res.data)
-    // this.getAllNotesByBugId(newNote.bug)
+    this.getNotesByBugId(newNote.bug)
   }
 
   async deleteNote(id) {
     try {
       await api.delete('api/notes/' + id)
-      AppState.notes = AppState.notes.filter(note => note.id !== id)
+      AppState.notes.filter(note => note.id !== id)
     } catch (error) {
       Notification.toast('Error:' + error, 'error')
     }
