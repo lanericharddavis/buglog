@@ -8,30 +8,19 @@
       </div>
     </div>
     <div class="row">
-      <div class="col">
+      <div class="col-md-4 col-12">
         <h1 class="font-bold" v-if="state.bug">
           {{ state.bug.title }}
         </h1>
       </div>
-      <div class="col" v-if="state.bug">
-        <button :disabled="state.bug.closed == true" class="btn btn-outline-danger" title="close this bug" @click="closeOutBug">
+      <div class="col-md-4 col-6" v-if="state.bug">
+        <button :disabled="state.bug.closed == true" v-if="state.account.id === state.bug.creatorId" class="btn btn-outline-danger" title="close this bug" @click="closeOutBug">
           Close Out Report
         </button>
       </div>
-
-      <!-- <div class="col">
-        <button class="btn btn-outline-info"
-                title="edit this bug report"
-                data-toggle="modal"
-                data-target="#edit-bug-form"
-                :disabled="state.bug.closed == true"
-        >
-          Edit Report
-        </button>
-      </div> -->
-
-      <div class="col" v-if="state.bug">
+      <div class="col-md-4 col-6" v-if="state.bug">
         <button :disabled="state.bug.closed == true"
+                v-if="state.account.id === state.bug.creatorId"
                 class="btn btn-outline-info"
                 title="close this bug"
                 data-toggle="modal"
@@ -53,7 +42,7 @@
       <div class="col-6">
         <div class="row">
           <p>Status: </p>
-          <h5 v-if="state.bug">
+          <h5 v-if="state.bug" class="mb-3">
             {{ state.bug.closed }}
           </h5>
           <!-- NOTE why does this not work? -->
@@ -68,7 +57,7 @@
     </div>
     <div class="row">
       <div class="col-md-2">
-        <img v-if="state.bug" class="creator-img ml-3" :src="state.bug.creator.picture" alt="">
+        <img v-if="state.bug" class="creator-img ml-3 mb-3" :src="state.bug.creator.picture" alt="">
       </div>
       <div class="col-md-10">
         <p v-if="state.bug" class="outline p-2">
@@ -81,10 +70,10 @@
         <h5>Notes</h5>
       </div>
       <div class="col-md-10 d-flex justify-content-center">
-        <form class="form-inline" @submit.prevent="createNote">
+        <form class="form col-md-10" @submit.prevent="createNote">
           <div class="form-group m-2">
             <label for="noteInput" class="m-2"><strong>Create New Note</strong></label>
-            <button type="submit" class="btn btn-primary pb-1 mr-2" title="submit note">
+            <button type="submit" class="btn btn-primary pb-1 mr-2 mb-2" title="submit note">
               <strong>Submit</strong>
             </button>
             <textarea type="text"
@@ -110,7 +99,7 @@
       </div> -->
     </div>
     <div class="row">
-      <div class="col p-3">
+      <div class="col-md-12 col-11 p-3 table-wrapper-scroll-y my-custom-scrollbar ">
         <table class="outline">
           <tr>
             <th class="notes-image-width">
@@ -178,7 +167,7 @@ export default {
         try {
           await notesService.createNote(state.newNote)
           // NOTE reseting to the empty object resets the input fields
-          state.newNote = {}
+          state.newNote = { bug: route.params.id }
           Notification.toast('Note Created!', 'success')
           // REVIEW CLOSING THE MODAL
           // eslint-disable-next-line no-undef
@@ -264,5 +253,14 @@ tr:nth-child(even) {
 
 .font-bold{
   font-weight: 800;
+}
+
+.my-custom-scrollbar {
+position: relative;
+height: 450px;
+overflow: auto;
+}
+.table-wrapper-scroll-y {
+display: block;
 }
 </style>

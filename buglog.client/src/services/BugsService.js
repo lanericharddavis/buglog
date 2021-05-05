@@ -42,23 +42,19 @@ class BugsService {
     this.getBugById(bugId)
   }
 
-  async filterClosedBugs(toggleState) {
-    const res = await api.get('api/bugs')
-    if (toggleState === true) {
-      res.filter(bug => bug.closed === true)
-    } else {
-      this.getBugs()
-    }
+  async filterClosed() {
+    AppState.bugs = AppState.bugs.filter(bugs => bugs.closed === false)
   }
 
   async closeOutBug(bug) {
-    if (bug.closed === false) {
-      bug.closed = true
-    } else {
-      bug.closed = false
-    }
-    const bugWithNewBugState = await api.put('api/bugs/' + bug.id, bug)
-    AppState.activeBug = bugWithNewBugState.data
+    // if (bug.closed === false) {
+    //   bug.closed = true
+    // } else {
+    //   bug.closed = false
+    // }
+    const bugWithNewBugState = await api.delete('api/bugs/' + bug.id, bug)
+    AppState.activeBug.closed = bugWithNewBugState.data.closed
+    console.log(bugWithNewBugState.data)
   }
 
   // async filterClosedBugs(checkedBox) {
